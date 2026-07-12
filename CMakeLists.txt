@@ -1,0 +1,47 @@
+cmake_minimum_required(VERSION 3.16)
+project(Notepad VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/src/UI)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+
+
+set(SOURCES
+    main.cpp
+    src/Views/MainWindow.cpp
+    src/Views/MainWindow.h
+
+    src/Model/Document.cpp
+    src/Model/Document
+    
+    src/Utils/FileHandler.cpp
+    src/Utils/FileHandler.h
+
+    src/UI/MainWindowUI.ui
+    resources.qrc
+)
+
+add_executable(Notepad ${SOURCES})
+
+
+target_include_directories(Notepad PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Views
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Model
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/UI
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/UI/Style
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+
+target_link_libraries(Notepad PRIVATE 
+    Qt6::Widgets 
+    Qt6::Network
+)
+

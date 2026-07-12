@@ -1,0 +1,31 @@
+#pragma once
+#include "QMainWindow"
+#include <QCloseEvent>
+#include "Document.h"
+
+namespace Ui{
+    class MainWindowUI;
+}
+
+class MainWindow : public QMainWindow{
+    Q_OBJECT
+    public:
+        MainWindow(QWidget *parent = nullptr);
+        ~MainWindow();
+
+    protected:
+        void closeEvent(QCloseEvent *event) override;
+
+    private:
+        void setupConnections();
+
+        Document *document;
+        Ui::MainWindowUI *ui;
+
+    private slots:
+        void onOpenTriggered();
+        void onCloseTriggered();
+        void onSaveTriggered();
+        void onSaveAsTriggered();
+        void onContentChanged();
+};

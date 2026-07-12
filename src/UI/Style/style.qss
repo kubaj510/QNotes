@@ -1,0 +1,78 @@
+QMainWindow, QWidget#centralwidget {
+  background-color: #1e1e1e;
+}
+QTextEdit#contentEditor {
+  background-color: #252525;
+  color: #d4d4d4;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+  padding: 20px 24px;
+  border: none;
+  border-radius: 6px;
+  selection-background-color: #3a3a3a;
+}
+QTextEdit#contentEditor:focus {
+  background-color: #282828;
+}
+QMenuBar {
+  background-color: #1e1e1e;
+  color: #999999;
+  font-size: 12px;
+  padding: 2px 6px;
+  border: none;
+}
+QMenuBar::item {
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+QMenuBar::item:selected {
+  background-color: #333333;
+  color: #d4d4d4;
+}
+QMenu {
+  background-color: #252525;
+  color: #d4d4d4;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  padding: 4px 0;
+  font-size: 12px;
+}
+QMenu::item {
+  padding: 5px 24px 5px 14px;
+  border-radius: 3px;
+  margin: 1px 5px;
+}
+QMenu::item:selected {
+  background-color: #333333;
+}
+QMenu::separator {
+  height: 1px;
+  background-color: #333333;
+  margin: 3px 10px;
+}
+QStatusBar {
+  background-color: #1e1e1e;
+  color: #666666;
+  font-size: 11px;
+  border-top: 1px solid #2a2a2a;
+  padding: 1px 10px;
+}
+QStatusBar::item { border: none; }
+QScrollBar:vertical {
+  background: transparent;
+  width: 6px;
+  margin: 2px;
+}
+QScrollBar::handle:vertical {
+  background: #3a3a3a;
+  min-height: 30px;
+  border-radius: 3px;
+}
+QScrollBar::handle:vertical:hover {
+  background: #4a4a4a;
+}
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical { background: none; }
+
