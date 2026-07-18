@@ -22,3 +22,22 @@ FileResult FileHandler::saveFile(const QString &path, const QString &content){
     return result;
 }
 
+FileResult FileHandler::loadFile(const QString &path){
+    QFile file(path);
+    FileResult result;
+
+    if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QTextStream in(&file);
+        
+        result.content = in.readAll();
+        result.success = true;
+        file.close();
+        
+        return result;
+    }
+
+    result.errorMessage = file.errorString();
+    result.success = false;
+
+    return result;
+}
