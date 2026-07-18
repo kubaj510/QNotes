@@ -66,7 +66,9 @@ void MainWindow::setupConnections(){
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::onSaveTriggered);
     connect(ui->actionSaveAs, &QAction::triggered, this, &MainWindow::onSaveAsTriggered);
     connect(ui->actionUndo, &QAction::triggered, ui->contentEditor, &QTextEdit::undo);
-    connect(ui->actionClose, &QAction::triggered, this, &QMainWindow::close); 
+    connect(ui->actionClose, &QAction::triggered, this, &QMainWindow::close);
+    connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
+    connect(document, &Document::modificationChanged, this, &MainWindow::updateWindowTitle);
 
 }
 
@@ -139,4 +141,21 @@ void MainWindow::onContentChanged(){
     document->setModified(true);
 }
 
+void MainWindow::onDocumentContentChanged(){
+    if(document->getContent() != ui->contentEditor->toPlainText()){
+        ui->contentEditor->setPlainText(document->getContent());
+    }
+}
 
+void MainWindow::updateWindowTitle(){
+    QString title = "Untitled";
+
+    if(!document->getFilePath().isEmpty()){
+        title = QFileInfo(document->getFilePath()).fileName();
+    }
+    if(document->getIsModified()){
+        title.prepend("* ");
+    }
+
+    setWindowTitle(title);
+}
