@@ -3,12 +3,8 @@
 #include "FileHandler.h"
 #include <QFile>
 #include <QTextStream>
-#include <QDataStream>
 #include <QStandardPaths>
-#include <QDir>
 #include <QFileDialog>
-#include <QTemporaryFile>
-#include <QFileSystemWatcher>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -37,12 +33,14 @@ void MainWindow::closeEvent(QCloseEvent *event){
 void MainWindow::setupConnections(){
     connect(ui->contentEditor, &QTextEdit::textChanged, this, &MainWindow::onContentChanged);
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onOpenTriggered);
+    connect(ui->actionNew, &QAction::triggered, this, &MainWindow::onNewTriggered);
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::onSaveTriggered);
     connect(ui->actionSaveAs, &QAction::triggered, this, &MainWindow::onSaveAsTriggered);
     connect(ui->actionUndo, &QAction::triggered, ui->contentEditor, &QTextEdit::undo);
     connect(ui->actionClose, &QAction::triggered, this, &QMainWindow::close);
     connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
     connect(document, &Document::modificationChanged, this, &MainWindow::updateWindowTitle);
+    connect(document, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
 
 }
 
@@ -100,8 +98,8 @@ bool MainWindow::onSaveAsTriggered(){
 
     FileResult result = FileHandler::saveFile(path, document->getContent());
     if(result.success){
-        document->setModified(false);
         document->setFilePath(path);
+        document->setModified(false);
 
         return true;
 
@@ -165,4 +163,12 @@ void MainWindow::updateWindowTitle(){
     }
 
     setWindowTitle(title);
+}
+
+void MainWindow::onNewTriggered(){
+    if(!saveChangesPrompt()) return;
+
+    document->setContent("");
+    document->setFilePath("");
+    document->setModified(false);
 }
