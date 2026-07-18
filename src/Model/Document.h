@@ -21,4 +21,8 @@ class Document : public QObject{
 
         bool isModified;
 
+    signals:
+        void contentChanged();
+        void filePathChanged(const QString &newPath);
+        void modificationChanged(const bool isModified);
 };

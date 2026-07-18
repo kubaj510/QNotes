@@ -7,13 +7,29 @@ Document::Document(QObject *parent) : QObject(parent) {
 }
 
 
-QString Document::getContent() const                  { return content; }
-QString Document::getFilePath() const                 { return filePath; }
+QString Document::getContent() const    { return content; }
+QString Document::getFilePath() const   { return filePath; }
+
+bool Document::getIsModified()          { return isModified; }
 
 
-void Document::setFilePath(const QString &path)       { filePath = path; }
-void Document::setContent(const QString &newContent)  { content = newContent; }
-void Document::setModified(bool modified)             { isModified = modified; }
+void Document::setFilePath(const QString &path){
+    if(filePath == path) return;
 
+    filePath = path;
+    emit filePathChanged(filePath);
+}
 
-bool Document::getIsModified()                        { return isModified; }
+void Document::setContent(const QString &newContent){
+    if(content == newContent) return;
+
+    content = newContent;
+    emit contentChanged();
+}
+
+void Document::setModified(bool modified){
+    if(isModified == modified) return;
+
+    isModified = modified;
+    emit modificationChanged(isModified);
+}
