@@ -37,23 +37,23 @@ void MainWindow::closeEvent(QCloseEvent *event){
 
         switch(res){
             case QMessageBox::Save:
-                onSaveTriggered();
+                if(onSaveTriggered()){
+                    event->accept();
+
+                } else{
+                    event->ignore();
+                }
                 break;
 
             case QMessageBox::Discard:
                 event->accept();
-                return;
                 break;
 
             case QMessageBox::Cancel:
+            default:
                 event->ignore();
                 break;
-
-            default:                
-                break;
         }
-
-        event->ignore();
         return;
     }
 
@@ -94,16 +94,17 @@ void MainWindow::onOpenTriggered(){
     }
 }
 
-void MainWindow::onSaveTriggered(){
+bool MainWindow::onSaveTriggered(){
     QString currentPath = document->getFilePath();
 
     if(currentPath.isEmpty()){
-        onSaveAsTriggered();
+        return onSaveAsTriggered();
 
     } else{
         FileResult result = FileHandler::saveFile(currentPath, document->getContent());
         if(result.success){
             document->setModified(false);
+            return true;
 
         } else{
             QMessageBox msgBox(this);
@@ -111,19 +112,23 @@ void MainWindow::onSaveTriggered(){
             msgBox.setDetailedText(result.errorMessage);
             msgBox.setIcon(QMessageBox::Critical);
             msgBox.exec();
+        
+            return false;
         }
     }
 }
 
-void MainWindow::onSaveAsTriggered(){
+bool MainWindow::onSaveAsTriggered(){
     QString path = QFileDialog::getSaveFileName(this, tr("Save your file"));
 
-    if(path.isEmpty()) return;
+    if(path.isEmpty()) return false;
 
     FileResult result = FileHandler::saveFile(path, document->getContent());
     if(result.success){
         document->setModified(false);
         document->setFilePath(path);
+
+        return true;
 
     } else{
         QMessageBox msgBox(this);
@@ -131,6 +136,8 @@ void MainWindow::onSaveAsTriggered(){
         msgBox.setDetailedText(result.errorMessage);
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.exec();
+    
+        return false;
     }
 }
 

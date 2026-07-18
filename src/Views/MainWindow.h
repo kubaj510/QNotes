@@ -24,8 +24,8 @@ class MainWindow : public QMainWindow{
 
     private slots:
         void onOpenTriggered();
-        void onSaveTriggered();
-        void onSaveAsTriggered();
+        bool onSaveTriggered();
+        bool onSaveAsTriggered();
         void onContentChanged();
         void onDocumentContentChanged();
         void updateWindowTitle(); // when modificationChanged or filePathChanged is emited
