@@ -18,6 +18,7 @@ class MainWindow : public QMainWindow{
 
     private:
         void setupConnections();
+        bool saveChangesPrompt();
 
         Document *document;
         Ui::MainWindowUI *ui;

@@ -26,38 +26,12 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
-    if(document->getIsModified()){
-        QMessageBox msgBox(this);
-        msgBox.setText("You have unsaved changes.");
-        msgBox.setInformativeText("Do you want to save your changes?");
-        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-        msgBox.setDefaultButton(QMessageBox::Save);
-        msgBox.setIcon(QMessageBox::Question);
-        int res = msgBox.exec();
-
-        switch(res){
-            case QMessageBox::Save:
-                if(onSaveTriggered()){
-                    event->accept();
-
-                } else{
-                    event->ignore();
-                }
-                break;
-
-            case QMessageBox::Discard:
-                event->accept();
-                break;
-
-            case QMessageBox::Cancel:
-            default:
-                event->ignore();
-                break;
-        }
-        return;
+    if(saveChangesPrompt()){
+        event->accept();
+    
+    } else{
+        event->ignore();
     }
-
-    event->accept();
 }
 
 void MainWindow::setupConnections(){
@@ -74,8 +48,9 @@ void MainWindow::setupConnections(){
 
 
 void MainWindow::onOpenTriggered(){
-    QString path = QFileDialog::getOpenFileName(this, tr("Open new file"));
+    if(!saveChangesPrompt()) return;
 
+    QString path = QFileDialog::getOpenFileName(this, tr("Open new file"));
     if(path.isEmpty()) return;
 
     FileResult result = FileHandler::loadFile(path);
@@ -83,7 +58,7 @@ void MainWindow::onOpenTriggered(){
     if(result.success){
         document->setFilePath(path);
         document->setContent(result.content);
-        ui->contentEditor->setPlainText(document->getContent());
+        document->setModified(false);
 
     } else{
         QMessageBox msgBox(this);
@@ -139,6 +114,31 @@ bool MainWindow::onSaveAsTriggered(){
     
         return false;
     }
+}
+
+bool MainWindow::saveChangesPrompt(){
+    if(document->getIsModified()){
+        QMessageBox msgBox(this);
+        msgBox.setText("You have unsaved changes.");
+        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        msgBox.setIcon(QMessageBox::Question);
+        int res = msgBox.exec();
+
+        switch(res){
+            case QMessageBox::Save:
+                return onSaveTriggered();
+
+            case QMessageBox::Discard:
+                return true;
+
+            case QMessageBox::Cancel:
+            default:
+                return false;
+        }
+    }
+    return true; // if current document is NOT modified
 }
 
 void MainWindow::onContentChanged(){
