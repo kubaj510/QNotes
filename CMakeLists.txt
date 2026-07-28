@@ -16,14 +16,21 @@ set(SOURCES
     main.cpp
     src/Views/MainWindow.cpp
     src/Views/MainWindow.h
+    src/Views/PreferencesWindow.cpp
+    src/Views/PreferencesWindow.h
 
+    src/Config/AppSettings.h
+    src/Config/SettingsManager.h
+    src/Config/SettingsManager.cpp
+    
     src/Model/Document.cpp
-    src/Model/Document
+    src/Model/Document.h
     
     src/Utils/FileHandler.cpp
     src/Utils/FileHandler.h
 
     src/UI/MainWindowUI.ui
+    src/UI/preferences.ui
     resources.qrc
 )
 
@@ -34,6 +41,7 @@ target_include_directories(Notepad PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Views
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Model
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Config
     ${CMAKE_CURRENT_SOURCE_DIR}/src/UI
     ${CMAKE_CURRENT_SOURCE_DIR}/src/UI/Style
     ${CMAKE_CURRENT_BINARY_DIR}

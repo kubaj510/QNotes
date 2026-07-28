@@ -10,7 +10,7 @@ Document::Document(QObject *parent) : QObject(parent) {
 QString Document::getContent() const    { return content; }
 QString Document::getFilePath() const   { return filePath; }
 
-bool Document::getIsModified()          { return isModified; }
+bool Document::getIsModified() const    { return isModified; }
 
 
 void Document::setFilePath(const QString &path){

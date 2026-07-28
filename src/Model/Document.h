@@ -13,7 +13,7 @@ class Document : public QObject{
         void setContent(const QString &newContent);
         void setModified(bool modified);
 
-        bool getIsModified();
+        bool getIsModified() const;
 
     private:
         QString filePath;
