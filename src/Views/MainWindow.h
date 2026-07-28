@@ -3,6 +3,8 @@
 #include <QCloseEvent>
 #include "Document.h"
 
+struct AppSettings;
+
 namespace Ui{
     class MainWindowUI;
 }
@@ -26,6 +28,7 @@ class MainWindow : public QMainWindow{
     private slots:
         void onOpenTriggered();
         void onNewTriggered(); 
+        void onPreferencesTriggered();
         void onContentChanged();
         void onDocumentContentChanged();
         void updateWindowTitle(); // when modificationChanged or filePathChanged is emited

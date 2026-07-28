@@ -1,6 +1,9 @@
 #include "ui_MainWindowUI.h"
 #include "MainWindow.h"
 #include "FileHandler.h"
+#include "AppSettings.h"
+#include "PreferencesWindow.h"
+#include "SettingsManager.h"
 #include <QFile>
 #include <QTextStream>
 #include <QStandardPaths>
@@ -13,7 +16,9 @@ MainWindow::MainWindow(QWidget *parent)
       ui(new Ui::MainWindowUI)
 {
     ui->setupUi(this);
+
     
+
     setupConnections();
 }
 
@@ -36,6 +41,7 @@ void MainWindow::setupConnections(){
     connect(ui->actionNew, &QAction::triggered, this, &MainWindow::onNewTriggered);
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::onSaveTriggered);
     connect(ui->actionSaveAs, &QAction::triggered, this, &MainWindow::onSaveAsTriggered);
+    connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onPreferencesTriggered);
     connect(ui->actionUndo, &QAction::triggered, ui->contentEditor, &QTextEdit::undo);
     connect(ui->actionClose, &QAction::triggered, this, &QMainWindow::close);
     connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
@@ -114,6 +120,21 @@ bool MainWindow::onSaveAsTriggered(){
     }
 }
 
+void MainWindow::onPreferencesTriggered(){
+    AppSettings settings = SettingsManager::loadSettings();
+    Preferences *preferencesWindow = new Preferences(settings, this);
+    preferencesWindow->setAttribute(Qt::WA_DeleteOnClose); // to delete the window when closed before the main window is closed
+
+    connect(preferencesWindow, &QDialog::finished, this, [this, preferencesWindow](int result){
+        if(result == QDialog::Accepted){
+            SettingsManager::saveSettings(preferencesWindow->getSettings());
+            
+        }
+    });
+
+    preferencesWindow->open();
+}
+
 bool MainWindow::saveChangesPrompt(){
     if(document->getIsModified()){
         QMessageBox msgBox(this);
@@ -172,3 +193,5 @@ void MainWindow::onNewTriggered(){
     document->setFilePath("");
     document->setModified(false);
 }
+
+
