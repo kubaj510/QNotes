@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    
+    applySettings(SettingsManager::loadSettings());
 
     setupConnections();
 }
@@ -128,7 +128,7 @@ void MainWindow::onPreferencesTriggered(){
     connect(preferencesWindow, &QDialog::finished, this, [this, preferencesWindow](int result){
         if(result == QDialog::Accepted){
             SettingsManager::saveSettings(preferencesWindow->getSettings());
-            
+            applySettings(SettingsManager::loadSettings());
         }
     });
 
@@ -194,4 +194,19 @@ void MainWindow::onNewTriggered(){
     document->setModified(false);
 }
 
+void MainWindow::applySettings(const AppSettings &settings){
+    QFont font = ui->contentEditor->font();
+    font.setPointSize(settings.fontSize);
+    ui->contentEditor->setFont(font);
 
+    ui->contentEditor->setWordWrapMode(settings.wrapWord ? QTextOption::WordWrap : QTextOption::NoWrap);
+
+    Qt::WindowFlags flags = windowFlags();
+    if(settings.alwaysOnTop){
+        flags |= Qt::WindowStaysOnTopHint;
+    } else{
+        flags &= ~Qt::WindowStaysOnTopHint;
+    }
+    setWindowFlags(flags);
+    show();
+}

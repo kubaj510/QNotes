@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow{
 
     private:
         void setupConnections();
+        void applySettings(const AppSettings &settings);
         bool saveChangesPrompt();
 
         Document *document;
