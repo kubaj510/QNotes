@@ -4,6 +4,7 @@
 #include "Document.h"
 
 struct AppSettings;
+class TranslationManager;
 
 namespace Ui{
     class MainWindowUI;
@@ -12,11 +13,12 @@ namespace Ui{
 class MainWindow : public QMainWindow{
     Q_OBJECT
     public:
-        MainWindow(QWidget *parent = nullptr);
+        MainWindow(TranslationManager *translator, QWidget *parent = nullptr);
         ~MainWindow();
 
     protected:
         void closeEvent(QCloseEvent *event) override;
+        void changeEvent(QEvent *event) override;
 
     private:
         void setupConnections();
@@ -24,6 +26,8 @@ class MainWindow : public QMainWindow{
         bool saveChangesPrompt();
 
         Document *document;
+        TranslationManager *translator;
+
         Ui::MainWindowUI *ui;
 
     private slots:

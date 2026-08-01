@@ -9,7 +9,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/src/UI)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network LinguistTools)
 
 
 set(SOURCES
@@ -29,13 +29,21 @@ set(SOURCES
     src/Utils/FileHandler.cpp
     src/Utils/FileHandler.h
 
+    src/Translator/TranslationManager.h
+    src/Translator/TranslationManager.cpp
+
     src/UI/MainWindowUI.ui
     src/UI/preferences.ui
     resources.qrc
 )
 
-add_executable(Notepad ${SOURCES})
+set(TS_FILES
+    translations/notepad_pl.ts
+)
 
+add_executable(Notepad ${SOURCES} ${TS_FILES})
+
+qt_add_translations(Notepad TS_FILES ${TS_FILES})
 
 target_include_directories(Notepad PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Views
@@ -44,6 +52,7 @@ target_include_directories(Notepad PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Config
     ${CMAKE_CURRENT_SOURCE_DIR}/src/UI
     ${CMAKE_CURRENT_SOURCE_DIR}/src/UI/Style
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Translator
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 

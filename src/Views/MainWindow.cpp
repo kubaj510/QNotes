@@ -4,15 +4,17 @@
 #include "AppSettings.h"
 #include "PreferencesWindow.h"
 #include "SettingsManager.h"
+#include "TranslationManager.h"
 #include <QFile>
 #include <QTextStream>
 #include <QStandardPaths>
 #include <QFileDialog>
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(TranslationManager *translator, QWidget *parent)
     : QMainWindow(parent),
       document(new Document(this)),
+      translator(translator),
       ui(new Ui::MainWindowUI)
 {
     ui->setupUi(this);
@@ -33,6 +35,14 @@ void MainWindow::closeEvent(QCloseEvent *event){
     } else{
         event->ignore();
     }
+}
+
+void MainWindow::changeEvent(QEvent *event){
+    if(event->type() == QEvent::LanguageChange){
+        ui->retranslateUi(this);
+        updateWindowTitle(); // to translate window title
+    }
+    QMainWindow::changeEvent(event);
 }
 
 void MainWindow::setupConnections(){
@@ -66,7 +76,7 @@ void MainWindow::onOpenTriggered(){
 
     } else{
         QMessageBox msgBox(this);
-        msgBox.setText("Cannot open the given file");
+        msgBox.setText(tr("Cannot open the given file"));
         msgBox.setDetailedText(result.errorMessage);
         msgBox.setIcon(QMessageBox::Information);
         msgBox.exec();
@@ -87,7 +97,7 @@ bool MainWindow::onSaveTriggered(){
 
         } else{
             QMessageBox msgBox(this);
-            msgBox.setText("Cannot save file. Please try again.");
+            msgBox.setText(tr("Cannot save file. Please try again."));
             msgBox.setDetailedText(result.errorMessage);
             msgBox.setIcon(QMessageBox::Critical);
             msgBox.exec();
@@ -111,7 +121,7 @@ bool MainWindow::onSaveAsTriggered(){
 
     } else{
         QMessageBox msgBox(this);
-        msgBox.setText("Cannot save file. Please try again.");
+        msgBox.setText(tr("Cannot save file. Please try again."));
         msgBox.setDetailedText(result.errorMessage);
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.exec();
@@ -138,8 +148,8 @@ void MainWindow::onPreferencesTriggered(){
 bool MainWindow::saveChangesPrompt(){
     if(document->getIsModified()){
         QMessageBox msgBox(this);
-        msgBox.setText("You have unsaved changes.");
-        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setText(tr("You have unsaved changes."));
+        msgBox.setInformativeText(tr("Do you want to save your changes?"));
         msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
         msgBox.setDefaultButton(QMessageBox::Save);
         msgBox.setIcon(QMessageBox::Question);
@@ -174,7 +184,7 @@ void MainWindow::onDocumentContentChanged(){
 }
 
 void MainWindow::updateWindowTitle(){
-    QString title = "Untitled";
+    QString title = tr("Untitled");
 
     if(!document->getFilePath().isEmpty()){
         title = QFileInfo(document->getFilePath()).fileName();
@@ -195,12 +205,24 @@ void MainWindow::onNewTriggered(){
 }
 
 void MainWindow::applySettings(const AppSettings &settings){
+    // changing theme of app between dark and light
+    QString stylePath = settings.isDarkMode ? ":/src/UI/Style/style.qss" : ":/src/UI/Style/light-style.qss";
+    QFile styleFile(stylePath);
+    if(styleFile.open(QFile::ReadOnly | QFile::Text)){
+        QTextStream in(&styleFile);
+        QString style = in.readAll();
+        qApp->setStyleSheet(style);
+    }
+
+    // change font size
     QFont font = ui->contentEditor->font();
     font.setPointSize(settings.fontSize);
     ui->contentEditor->setFont(font);
 
+    // wrap word
     ui->contentEditor->setWordWrapMode(settings.wrapWord ? QTextOption::WordWrap : QTextOption::NoWrap);
 
+    // alwaysOnTop
     Qt::WindowFlags flags = windowFlags();
     if(settings.alwaysOnTop){
         flags |= Qt::WindowStaysOnTopHint;
@@ -209,4 +231,7 @@ void MainWindow::applySettings(const AppSettings &settings){
     }
     setWindowFlags(flags);
     show();
+
+    // change language
+    translator->switchLanguage(settings.language);
 }
