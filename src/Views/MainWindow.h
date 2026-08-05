@@ -36,6 +36,7 @@ class MainWindow : public QMainWindow{
         void onPreferencesTriggered();
         void onContentChanged();
         void onDocumentContentChanged();
+        void onModificationChanged(bool modified);
         void updateWindowTitle(); // when modificationChanged or filePathChanged is emited
         
         bool onSaveTriggered();

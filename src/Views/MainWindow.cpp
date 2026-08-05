@@ -55,7 +55,7 @@ void MainWindow::setupConnections(){
     connect(ui->actionUndo, &QAction::triggered, ui->contentEditor, &QTextEdit::undo);
     connect(ui->actionClose, &QAction::triggered, this, &QMainWindow::close);
     connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
-    connect(document, &Document::modificationChanged, this, &MainWindow::updateWindowTitle);
+    connect(document, &Document::modificationChanged, this, &MainWindow::onModificationChanged);
     connect(document, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
 
 }
@@ -175,6 +175,10 @@ void MainWindow::onContentChanged(){
     
     document->setContent(ui->contentEditor->toPlainText());
     document->setModified(true);
+
+    // TODO invoke method for autoSave or actaully
+    // check save or not - if so run timer that will have slot
+    // to autoSave method
 }
 
 void MainWindow::onDocumentContentChanged(){
@@ -194,6 +198,12 @@ void MainWindow::updateWindowTitle(){
     }
 
     setWindowTitle(title);
+}
+
+void MainWindow::onModificationChanged(bool modified){
+    updateWindowTitle();
+
+
 }
 
 void MainWindow::onNewTriggered(){
