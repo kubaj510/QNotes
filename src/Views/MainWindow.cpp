@@ -10,21 +10,26 @@
 #include <QStandardPaths>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTimer>
 
 MainWindow::MainWindow(TranslationManager *translator, QWidget *parent)
     : QMainWindow(parent),
       document(new Document(this)),
       translator(translator),
+      currentSettings(new AppSettings),
+      autoSaveTimer(new QTimer(this)),
       ui(new Ui::MainWindowUI)
 {
     ui->setupUi(this);
 
-    applySettings(SettingsManager::loadSettings());
+    autoSaveTimer->setSingleShot(true);
 
     setupConnections();
+    applySettings(SettingsManager::loadSettings());
 }
 
 MainWindow::~MainWindow(){
+    delete currentSettings;
     delete ui; 
 }
 
@@ -57,7 +62,7 @@ void MainWindow::setupConnections(){
     connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
     connect(document, &Document::modificationChanged, this, &MainWindow::onModificationChanged);
     connect(document, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
-
+    connect(autoSaveTimer, &QTimer::timeout, this, &MainWindow::onAutoSaveTimeout); 
 }
 
 
@@ -176,9 +181,6 @@ void MainWindow::onContentChanged(){
     document->setContent(ui->contentEditor->toPlainText());
     document->setModified(true);
 
-    // TODO invoke method for autoSave or actaully
-    // check save or not - if so run timer that will have slot
-    // to autoSave method
 }
 
 void MainWindow::onDocumentContentChanged(){
@@ -203,7 +205,15 @@ void MainWindow::updateWindowTitle(){
 void MainWindow::onModificationChanged(bool modified){
     updateWindowTitle();
 
-
+    if(modified && currentSettings->autoSave && !document->getFilePath().isEmpty()){
+        if(!autoSaveTimer->isActive()){
+            autoSaveTimer->start(300000); // 5min
+        }
+    } else{
+        if(autoSaveTimer->isActive()){
+            autoSaveTimer->stop();
+        }
+    }
 }
 
 void MainWindow::onNewTriggered(){
@@ -215,6 +225,8 @@ void MainWindow::onNewTriggered(){
 }
 
 void MainWindow::applySettings(const AppSettings &settings){
+    *currentSettings = settings;
+
     // changing theme of app between dark and light
     QString stylePath = settings.isDarkMode ? ":/src/UI/Style/style.qss" : ":/src/UI/Style/light-style.qss";
     QFile styleFile(stylePath);
@@ -244,4 +256,19 @@ void MainWindow::applySettings(const AppSettings &settings){
 
     // change language
     translator->switchLanguage(settings.language);
+
+
+    // auto save
+    // if the user enables autoSave while having a modified (unsaved) document
+    // then onModificationChanged will never be invoked unless
+    // the user saves the file  to avoid this problem
+    // I invoke it here to start the autoSave timer if needed
+    onModificationChanged(document->getIsModified());
 }
+
+
+void MainWindow::onAutoSaveTimeout(){
+    onSaveTriggered();
+    qDebug() << "autoSave triggered";
+}
+

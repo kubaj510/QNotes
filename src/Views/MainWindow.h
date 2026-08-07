@@ -27,6 +27,9 @@ class MainWindow : public QMainWindow{
 
         Document *document;
         TranslationManager *translator;
+        AppSettings *currentSettings;
+
+        QTimer *autoSaveTimer;
 
         Ui::MainWindowUI *ui;
 
@@ -37,6 +40,7 @@ class MainWindow : public QMainWindow{
         void onContentChanged();
         void onDocumentContentChanged();
         void onModificationChanged(bool modified);
+        void onAutoSaveTimeout();
         void updateWindowTitle(); // when modificationChanged or filePathChanged is emited
         
         bool onSaveTriggered();
