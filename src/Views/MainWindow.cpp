@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTimer>
+#include <QSettings>
 
 MainWindow::MainWindow(TranslationManager *translator, QWidget *parent)
     : QMainWindow(parent),
@@ -21,6 +22,10 @@ MainWindow::MainWindow(TranslationManager *translator, QWidget *parent)
       ui(new Ui::MainWindowUI)
 {
     ui->setupUi(this);
+    
+    // to restore previous window size after closing an app
+    QSettings settings;
+    this->restoreGeometry(settings.value("windowSize").toByteArray());
 
     autoSaveTimer->setSingleShot(true);
 
@@ -35,6 +40,10 @@ MainWindow::~MainWindow(){
 
 void MainWindow::closeEvent(QCloseEvent *event){
     if(saveChangesPrompt()){
+        // saves window size to restore it later
+        QSettings settings;
+        settings.setValue("windowSize", this->saveGeometry());
+
         event->accept();
     
     } else{

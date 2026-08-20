@@ -15,7 +15,9 @@ int main (int argc, char *argv[]){
 
     MainWindow window(&translationManager);
     window.setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
-    window.setFixedSize(320, 480);
+    window.setMinimumSize(250, 190);
+    // window.resize(320, 400);
+    // window.setFixedSize(320, 480);
 
     window.show();
 
