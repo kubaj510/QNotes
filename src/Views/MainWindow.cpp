@@ -5,6 +5,7 @@
 #include "PreferencesWindow.h"
 #include "SettingsManager.h"
 #include "TranslationManager.h"
+#include "HelpWindow.h"
 #include <QFile>
 #include <QTextStream>
 #include <QStandardPaths>
@@ -68,6 +69,7 @@ void MainWindow::setupConnections(){
     connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onPreferencesTriggered);
     connect(ui->actionUndo, &QAction::triggered, ui->contentEditor, &QTextEdit::undo);
     connect(ui->actionClose, &QAction::triggered, this, &QMainWindow::close);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::openHelpWindow);
     connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
     connect(document, &Document::modificationChanged, this, &MainWindow::onModificationChanged);
     connect(document, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
@@ -231,6 +233,17 @@ void MainWindow::onNewTriggered(){
     document->setContent("");
     document->setFilePath("");
     document->setModified(false);
+}
+
+void MainWindow::openHelpWindow(){
+    if(!helpWindow){
+        helpWindow = new HelpWindow(this);
+        helpWindow->setWindowFlags(Qt::Window); // to ensure that helpWindow is actually a seperate window, not part of MainWindow
+    }
+
+    helpWindow->show();
+    helpWindow->raise();
+    helpWindow->activateWindow();
 }
 
 void MainWindow::applySettings(const AppSettings &settings){

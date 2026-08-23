@@ -3,8 +3,10 @@
 #include <QCloseEvent>
 #include "Document.h"
 
+
 struct AppSettings;
 class TranslationManager;
+class HelpWindow;
 
 namespace Ui{
     class MainWindowUI;
@@ -28,6 +30,7 @@ class MainWindow : public QMainWindow{
         Document *document;
         TranslationManager *translator;
         AppSettings *currentSettings;
+        HelpWindow *helpWindow = nullptr;
 
         QTimer *autoSaveTimer;
 
@@ -42,7 +45,8 @@ class MainWindow : public QMainWindow{
         void onModificationChanged(bool modified);
         void onAutoSaveTimeout();
         void updateWindowTitle(); // when modificationChanged or filePathChanged is emited
-        
+        void openHelpWindow(); // opens modeless help window
+
         bool onSaveTriggered();
         bool onSaveAsTriggered();
 };

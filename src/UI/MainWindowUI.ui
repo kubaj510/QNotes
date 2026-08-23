@@ -36,7 +36,7 @@
      <x>0</x>
      <y>0</y>
      <width>307</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFIle">
@@ -64,6 +64,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFIle"/>
    <addaction name="menuEdit"/>
@@ -126,6 +127,11 @@
   <action name="actionPaste">
    <property name="text">
     <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>
