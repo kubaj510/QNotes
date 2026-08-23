@@ -18,6 +18,8 @@ set(SOURCES
     src/Views/MainWindow.h
     src/Views/PreferencesWindow.cpp
     src/Views/PreferencesWindow.h
+    src/Views/HelpWindow.h
+    src/Views/HelpWindow.cpp
 
     src/Config/AppSettings.h
     src/Config/SettingsManager.h
