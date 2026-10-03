@@ -29,6 +29,7 @@ AppSettings Preferences::getSettings() const{
     settings.autoSave = ui->autoSaveCheck->isChecked();
     settings.fontSize = ui->fontSize->value();
     settings.language = ui->selectLanguage->currentData().toString();
+    settings.hideMenuBar = ui->hideMenuBar->isChecked();
 
     return settings;
 }
@@ -39,6 +40,7 @@ void Preferences::applyCurrentSettings(const AppSettings &settings){
     ui->autoSaveCheck->setChecked(settings.autoSave);
     ui->fontSize->setValue(settings.fontSize);
     ui->selectLanguage->setCurrentIndex(ui->selectLanguage->findData(settings.language));
+    ui->hideMenuBar->setChecked(settings.hideMenuBar);
 
     if(settings.isDarkMode){
         ui->darkButton->setChecked(true);

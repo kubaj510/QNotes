@@ -70,6 +70,11 @@ void MainWindow::setupConnections(){
     connect(ui->actionUndo, &QAction::triggered, ui->contentEditor, &QTextEdit::undo);
     connect(ui->actionClose, &QAction::triggered, this, &QMainWindow::close);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::openHelpWindow);
+    connect(ui->menuButton, &QPushButton::clicked,  this, [this](){
+        ui->menubar->setVisible(!ui->menubar->isVisible());
+        QSettings settings;
+        settings.setValue("hideMenuBar", !ui->menubar->isVisible()); 
+    });
     connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
     connect(document, &Document::modificationChanged, this, &MainWindow::onModificationChanged);
     connect(document, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
@@ -279,6 +284,13 @@ void MainWindow::applySettings(const AppSettings &settings){
     // change language
     translator->switchLanguage(settings.language);
 
+    // hide menu bar
+    if(settings.hideMenuBar){
+        ui->menubar->setVisible(false);
+
+    } else{
+        ui->menubar->setVisible(true);
+    }
 
     // auto save
     // if the user enables autoSave while having a modified (unsaved) document
