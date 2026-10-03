@@ -162,13 +162,6 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QCheckBox" name="autoSizeCheck">
-        <property name="text">
-         <string>Auto size</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
