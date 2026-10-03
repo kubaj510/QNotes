@@ -11,6 +11,7 @@ AppSettings SettingsManager::loadSettings(){
     result.autoSave = settings.value("autoSave", false).toBool();
     result.fontSize = settings.value("fontSize", 14).toInt();
     result.language = settings.value("language", "en").toString();
+    result.hideMenuBar = settings.value("hideMenuBar", false).toBool();
 
     return result;
 }
@@ -24,4 +25,5 @@ void SettingsManager::saveSettings(const AppSettings &newSettings){
     settings.setValue("autoSave", newSettings.autoSave);
     settings.setValue("fontSize", newSettings.fontSize);
     settings.setValue("language", newSettings.language);
+    settings.setValue("hideMenuBar", newSettings.hideMenuBar);
 }

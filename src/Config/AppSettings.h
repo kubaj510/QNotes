@@ -9,6 +9,7 @@ struct AppSettings{
     bool alwaysOnTop = true;
     bool wrapWord = true;
     bool autoSave = false;
+    bool hideMenuBar = false;
 
     int fontSize = 14; // font size for the text editor
 
