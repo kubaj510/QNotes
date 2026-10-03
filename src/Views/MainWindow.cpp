@@ -62,19 +62,33 @@ void MainWindow::changeEvent(QEvent *event){
 
 void MainWindow::setupConnections(){
     connect(ui->contentEditor, &QTextEdit::textChanged, this, &MainWindow::onContentChanged);
+    
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onOpenTriggered);
     connect(ui->actionNew, &QAction::triggered, this, &MainWindow::onNewTriggered);
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::onSaveTriggered);
     connect(ui->actionSaveAs, &QAction::triggered, this, &MainWindow::onSaveAsTriggered);
     connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onPreferencesTriggered);
+    
     connect(ui->actionUndo, &QAction::triggered, ui->contentEditor, &QTextEdit::undo);
+    connect(ui->actionRedo, &QAction::triggered, ui->contentEditor, &QTextEdit::redo);
+    connect(ui->actionCut, &QAction::triggered, ui->contentEditor, &QTextEdit::cut);
+    connect(ui->actionCopy, &QAction::triggered, ui->contentEditor, &QTextEdit::copy);
+    connect(ui->actionPaste, &QAction::triggered, ui->contentEditor, &QTextEdit::paste);
+    
+    connect(ui->contentEditor, &QTextEdit::undoAvailable, ui->actionUndo, &QAction::setEnabled);
+    connect(ui->contentEditor, &QTextEdit::redoAvailable, ui->actionRedo, &QAction::setEnabled);
+    connect(ui->contentEditor, &QTextEdit::copyAvailable, ui->actionCopy, &QAction::setEnabled);
+    connect(ui->contentEditor, &QTextEdit::copyAvailable, ui->actionCut, &QAction::setEnabled);
+    
     connect(ui->actionClose, &QAction::triggered, this, &QMainWindow::close);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::openHelpWindow);
+    
     connect(ui->menuButton, &QPushButton::clicked,  this, [this](){
         ui->menubar->setVisible(!ui->menubar->isVisible());
         QSettings settings;
         settings.setValue("hideMenuBar", !ui->menubar->isVisible()); 
     });
+    
     connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
     connect(document, &Document::modificationChanged, this, &MainWindow::onModificationChanged);
     connect(document, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
