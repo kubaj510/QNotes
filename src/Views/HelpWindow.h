@@ -8,11 +8,17 @@ namespace Ui{
 class HelpWindow : public QWidget{
     Q_OBJECT
     public:
-        HelpWindow(QWidget *parent = nullptr); //this constructor is fine because all helps file will be loaded here or by helper function from Utils
+        HelpWindow(QWidget *parent = nullptr);
         ~HelpWindow();
+
+    protected:
+        void closeEvent(QCloseEvent *event) override;
 
     private:
         void setupConnections();
+        
+        void writeSettings();
+        void loadSettings();
 
         Ui::Help *ui;
 
