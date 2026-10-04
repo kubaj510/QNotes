@@ -4,11 +4,10 @@ Lightweight sticky-note style notepad built with C++ and Qt6. Quick notes with d
 
 ## Screenshots
 
-![Main window](img/screenshot-main.png)
-![Preferences](img/screenshot-preferences.png)
+![Main window](img/screenshot-main.png) 
+![Preferences](img/screenshot-preferences.png) 
 ![Light theme](img/screenshot-light.png)
 
-> Add your screenshots to `img/` with these names.
 
 ## Requirements
 
