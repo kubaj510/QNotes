@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(Notepad VERSION 0.1 LANGUAGES CXX)
+project(QNotes VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,7 +9,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/src/UI)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Widgets LinguistTools)
 
 
 set(SOURCES
@@ -43,11 +43,11 @@ set(TS_FILES
     translations/notepad_pl.ts
 )
 
-add_executable(Notepad ${SOURCES} ${TS_FILES})
+add_executable(QNotes ${SOURCES} ${TS_FILES})
 
-qt_add_translations(Notepad TS_FILES ${TS_FILES})
+qt_add_translations(QNotes TS_FILES ${TS_FILES})
 
-target_include_directories(Notepad PRIVATE 
+target_include_directories(QNotes PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Views
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Model
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Utils
@@ -55,12 +55,12 @@ target_include_directories(Notepad PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/UI
     ${CMAKE_CURRENT_SOURCE_DIR}/src/UI/Style
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Translator
+    ${CMAKE_CURRENT_SOURCE_DIR}/help
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 
-target_link_libraries(Notepad PRIVATE 
+target_link_libraries(QNotes PRIVATE 
     Qt6::Widgets 
-    Qt6::Network
 )
 

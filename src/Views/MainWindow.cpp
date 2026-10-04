@@ -6,19 +6,23 @@
 #include "SettingsManager.h"
 #include "TranslationManager.h"
 #include "HelpWindow.h"
+#include <QApplication>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
-#include <QStandardPaths>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTimer>
 #include <QSettings>
+#include <QDebug>
+#include <QKeySequence>
+#include <QPushButton>
+#include <QTextEdit>
 
 MainWindow::MainWindow(TranslationManager *translator, QWidget *parent)
     : QMainWindow(parent),
       document(new Document(this)),
       translator(translator),
-      currentSettings(new AppSettings),
       autoSaveTimer(new QTimer(this)),
       ui(new Ui::MainWindowUI)
 {
@@ -35,7 +39,6 @@ MainWindow::MainWindow(TranslationManager *translator, QWidget *parent)
 }
 
 MainWindow::~MainWindow(){
-    delete currentSettings;
     delete ui; 
 }
 
@@ -84,15 +87,26 @@ void MainWindow::setupConnections(){
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::openHelpWindow);
     
     connect(ui->menuButton, &QPushButton::clicked,  this, [this](){
-        ui->menubar->setVisible(!ui->menubar->isVisible());
-        QSettings settings;
-        settings.setValue("hideMenuBar", !ui->menubar->isVisible()); 
+        const bool newVisible = !ui->menubar->isVisible();
+        
+        ui->menubar->setVisible(newVisible);
+
+        AppSettings s = SettingsManager::loadSettings();
+        s.hideMenuBar = !newVisible;
+        SettingsManager::saveSettings(s);
+        currentSettings.hideMenuBar = s.hideMenuBar; 
     });
     
     connect(document, &Document::contentChanged, this, &MainWindow::onDocumentContentChanged);
     connect(document, &Document::modificationChanged, this, &MainWindow::onModificationChanged);
     connect(document, &Document::filePathChanged, this, &MainWindow::updateWindowTitle);
     connect(autoSaveTimer, &QTimer::timeout, this, &MainWindow::onAutoSaveTimeout); 
+
+    ui->actionUndo->setShortcuts(QKeySequence::Undo);
+    ui->actionRedo->setShortcuts(QKeySequence::Redo);
+    ui->actionCut->setShortcuts(QKeySequence::Cut);
+    ui->actionCopy->setShortcuts(QKeySequence::Copy);
+    ui->actionPaste->setShortcuts(QKeySequence::Paste);
 }
 
 
@@ -235,9 +249,9 @@ void MainWindow::updateWindowTitle(){
 void MainWindow::onModificationChanged(bool modified){
     updateWindowTitle();
 
-    if(modified && currentSettings->autoSave && !document->getFilePath().isEmpty()){
+    if(modified && currentSettings.autoSave && !document->getFilePath().isEmpty()){
         if(!autoSaveTimer->isActive()){
-            autoSaveTimer->start(300000); // 5min
+            autoSaveTimer->start(AutoSaveIntervalMs);
         }
     } else{
         if(autoSaveTimer->isActive()){
@@ -266,7 +280,7 @@ void MainWindow::openHelpWindow(){
 }
 
 void MainWindow::applySettings(const AppSettings &settings){
-    *currentSettings = settings;
+    currentSettings = settings;
 
     // changing theme of app between dark and light
     QString stylePath = settings.isDarkMode ? ":/src/UI/Style/style.qss" : ":/src/UI/Style/light-style.qss";

@@ -2,9 +2,9 @@
 #include "QMainWindow"
 #include <QCloseEvent>
 #include "Document.h"
+#include "AppSettings.h"
 
 
-struct AppSettings;
 class TranslationManager;
 class HelpWindow;
 
@@ -28,11 +28,16 @@ class MainWindow : public QMainWindow{
         bool saveChangesPrompt();
 
         Document *document;
+        
+        // non-owning pointer
+        // owned by the caller (main.cpp) and must outlive this window
         TranslationManager *translator;
-        AppSettings *currentSettings;
+        
+        AppSettings currentSettings;
         HelpWindow *helpWindow = nullptr;
 
         QTimer *autoSaveTimer;
+        static constexpr int AutoSaveIntervalMs = 5 * 60 * 1000; // 5min
 
         Ui::MainWindowUI *ui;
 
